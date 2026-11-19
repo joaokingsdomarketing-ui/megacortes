@@ -40,8 +40,15 @@ def _ytdlp_base() -> list[str]:
                 break
                 
     if cookies and Path(cookies).is_file():
-        log(f"Usando cookies autenticados: {cookies}")
-        cmd += ["--cookies", cookies]
+        try:
+            tmp_cookies = Path("/tmp/yt_cookies.txt")
+            shutil.copyfile(cookies, tmp_cookies)
+            os.chmod(tmp_cookies, 0o666)
+            cmd += ["--cookies", str(tmp_cookies)]
+            log(f"Usando cookies autenticados: {cookies} (cópia ativa gravável em {tmp_cookies})")
+        except Exception as e:
+            log(f"Aviso ao preparar cookies: {e}")
+            cmd += ["--cookies", cookies]
     else:
         # Contorna o bloqueio de bot em servidores (IPs de data center) emulando clientes mobile
         cmd += ["--extractor-args", "youtube:player_client=android,ios,web"]
