@@ -7,7 +7,7 @@ services:
       - "8000:8000"
     volumes:
       - ./data:/data
-      - ./cookies.txt:/data/cookies.txt:ro                          # vídeos em ./data/videos; cortes em ./data/out
+      - ./cookies.txt:/data/cookies.txt                          # vídeos em ./data/videos; cortes em ./data/out
       - whisper-cache:/root/.cache/huggingface  # modelos do Whisper (baixa uma vez só)
 volumes:
   whisper-cache:
