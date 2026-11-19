@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "megacortes"
+version = "0.2.0"
+description = "Gerador próprio de cortes verticais (estilo OpusClip)"
+requires-python = ">=3.10"
+dependencies = ["numpy", "pyyaml", "requests"]
+
+[project.optional-dependencies]
+full = ["faster-whisper>=1.0.0", "yt-dlp[default]", "opencv-python-headless"]
+dev = ["pytest"]
+
+[project.scripts]
+megacortes = "megacortes.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["megacortes*"]
+
+[tool.setuptools.package-data]
+megacortes = ["profiles/*.yaml", "web/static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

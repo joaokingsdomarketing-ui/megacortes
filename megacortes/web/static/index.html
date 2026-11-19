@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MegaCortes</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23F0301E'/%3E%3Cpath d='M11 8l13 8-13 8z' fill='white'/%3E%3C/svg%3E">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#f0301e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MegaCortes">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="rec" aria-hidden="true"></span>MegaCortes</div>
+  <nav aria-label="Seções">
+    <button data-view="create" aria-current="page">Criar</button>
+    <button data-view="projects">Projetos <span id="badge" class="badge" hidden></span></button>
+  </nav>
+  <button id="btnSettings" class="ghost">Configurações</button>
+</header>
+<div id="warn" role="status"></div>
+
+<main>
+<section id="view-create">
+  <form id="form" class="create" autocomplete="off">
+    <div class="col-main">
+      <h1>Cole os links. Receba os cortes prontos.</h1>
+      <p class="lead">Cada vídeo vira vários cortes verticais com gancho, legenda animada, título e hashtags.</p>
+
+      <label class="field big">
+        <span>Links dos vídeos (um por linha)</span>
+        <textarea id="links" rows="6" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/playlist?list=...&#10;https://www.tiktok.com/@canal/video/..."></textarea>
+      </label>
+      <div class="row">
+        <button type="button" id="btnUpload" class="ghost">Enviar arquivo do computador</button>
+        <input type="file" id="fileInput" accept="video/*,audio/*,.mkv,.mov" multiple hidden>
+        <label class="check"><input type="checkbox" id="expand"> Expandir playlists e canais</label>
+        <label class="inline">até <input type="number" id="maxVideos" min="1" max="500" value="20"> vídeos por link</label>
+      </div>
+      <div id="uploadStatus" class="hint"></div>
+
+      <fieldset>
+        <legend>Visual dos cortes</legend>
+        <div class="presets" id="presets" role="radiogroup" aria-label="Estilos prontos"></div>
+        <div class="colors">
+          <label class="color"><input type="color" id="c_highlight"><span>Palavra falada</span></label>
+          <label class="color"><input type="color" id="c_primary"><span>Texto</span></label>
+          <label class="color"><input type="color" id="c_outline"><span>Contorno</span></label>
+          <label class="color"><input type="color" id="c_hook_box"><span>Faixa do gancho</span></label>
+          <label class="color"><input type="color" id="c_hook_text"><span>Texto do gancho</span></label>
+        </div>
+        <div class="grid3">
+          <label class="field"><span>Tamanho da legenda <output id="o_size"></output></span><input type="range" id="size" min="50" max="120"></label>
+          <label class="field"><span>Palavras por linha <output id="o_wpl"></output></span><input type="range" id="wpl" min="1" max="5"></label>
+          <label class="field"><span>Altura da legenda <output id="o_mv"></output></span><input type="range" id="mv" min="200" max="900" step="10"></label>
+          <label class="field"><span>Gancho na tela <output id="o_hs"></output></span><input type="range" id="hs" min="0" max="8" step="0.2"></label>
+          <label class="check"><input type="checkbox" id="upper"> Legenda em maiúsculas</label>
+          <label class="check"><input type="checkbox" id="hookOn"> Mostrar gancho no início</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Quantidade e escolha dos trechos</legend>
+        <div class="grid3">
+          <label class="field"><span>Cortes por vídeo</span><input type="number" id="clips" min="1" max="500"></label>
+          <label class="field"><span>Duração mínima (s)</span><input type="number" id="minS" min="5" max="170"></label>
+          <label class="field"><span>Duração máxima (s)</span><input type="number" id="maxS" min="6" max="180"></label>
+          <label class="field"><span>Nota mínima <output id="o_score"></output></span><input type="range" id="minScore" min="0" max="90" step="5" value="0"></label>
+          <label class="field"><span>Enquadramento</span>
+            <select id="reframe"><option value="blur">Vídeo inteiro + fundo desfocado</option><option value="center">Preencher a tela</option><option value="face">Seguir o rosto</option></select></label>
+          <label class="field"><span>Nicho</span><select id="profile"></select></label>
+        </div>
+        <details>
+          <summary>Ajustes avançados</summary>
+          <label class="field"><span>O que a IA deve procurar</span><textarea id="niche" rows="5"></textarea></label>
+          <div class="grid2">
+            <label class="field"><span>Palavras-chave (uma por linha, «palavra: peso»)</span><textarea id="keywords" rows="5"></textarea></label>
+            <label class="field"><span>Hashtags</span><textarea id="hashtags" rows="5" placeholder="#shorts #fyp"></textarea></label>
+          </div>
+          <div class="grid3">
+            <label class="field"><span>Modelo de transcrição</span><select id="whisper"></select></label>
+            <label class="field"><span>Idioma da fala</span><input id="language" placeholder="automático (pt, en...)"></label>
+            <label class="field"><span>Processador</span><select id="device"><option value="auto">Automático</option><option value="cpu">CPU</option><option value="cuda">Placa de vídeo (CUDA)</option></select></label>
+            <label class="field"><span>IA para escolher os cortes</span><select id="llm"></select></label>
+            <label class="field"><span>Nome do projeto</span><input id="name" placeholder="opcional"></label>
+          </div>
+        </details>
+      </fieldset>
+
+      <label class="check rights"><input type="checkbox" id="rights"> Tenho os direitos ou a autorização para usar estes vídeos.</label>
+      <div class="cta">
+        <button type="submit" class="primary" id="btnGo">Gerar cortes</button>
+        <span id="estimate" class="hint"></span>
+      </div>
+      <div id="formError" class="error" role="alert" hidden></div>
+    </div>
+
+    <aside class="col-prev" aria-label="Pré-visualização">
+      <div class="phone">
+        <div class="screen" id="screen">
+          <div class="bgv"></div>
+          <div class="fgv"></div>
+          <div class="hookbox" id="pvHook">VOCÊ NÃO VAI ACREDITAR NISSO</div>
+          <div class="cap" id="pvCap"></div>
+        </div>
+      </div>
+      <p class="hint center">Prévia do estilo. O vídeo final sai em 1080×1920.</p>
+    </aside>
+  </form>
+</section>
+
+<section id="view-projects" hidden>
+  <div class="projects">
+    <div class="plist" id="plist"></div>
+    <div class="pdetail" id="pdetail"></div>
+  </div>
+</section>
+</main>
+
+<dialog id="dlgSettings">
+  <form method="dialog" id="settingsForm">
+    <h2>Configurações</h2>
+    <p class="hint">As chaves ficam salvas só neste computador, na pasta de dados do MegaCortes.</p>
+    <label class="field"><span>IA padrão</span><select id="s_provider"></select></label>
+    <label class="field"><span>Modelo (opcional)</span><input id="s_model"></label>
+    <div id="s_keys"></div>
+    <div id="s_caps" class="hint"></div>
+    <div class="row end"><button value="cancel" class="ghost">Fechar</button><button id="s_save" value="default" class="primary">Salvar</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgEdit">
+  <form method="dialog" id="editForm">
+    <h2>Editar corte</h2>
+    <label class="field"><span>Título</span><input id="e_title" maxlength="120"></label>
+    <label class="field"><span>Gancho na tela (até 8 palavras)</span><input id="e_hook" maxlength="90"></label>
+    <div class="grid2">
+      <label class="field"><span>Início (segundos)</span><input id="e_start" type="number" step="0.1" min="0"></label>
+      <label class="field"><span>Fim (segundos)</span><input id="e_end" type="number" step="0.1" min="0"></label>
+    </div>
+    <div id="e_err" class="error" hidden></div>
+    <div class="row end"><button value="cancel" class="ghost">Cancelar</button><button id="e_save" value="default" class="primary">Salvar e renderizar de novo</button></div>
+  </form>
+</dialog>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

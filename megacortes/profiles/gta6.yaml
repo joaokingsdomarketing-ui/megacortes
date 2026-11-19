@@ -1,0 +1,95 @@
+# Perfil de nicho: GTA 6 / GTA VI
+# Edite à vontade: o prompt guia a IA; as palavras-chave pesam na pontuação
+# (também funcionam sem IA); risk_keywords só ALERTAM para revisão manual.
+
+name: gta6
+language: null          # null = detectar automaticamente (pt, en, ...)
+clips: 8
+min_seconds: 20
+max_seconds: 55
+reframe: blur           # blur = vídeo inteiro no centro + fundo desfocado (melhor p/ gameplay e HUD)
+
+niche_prompt: |
+  Nicho: GTA 6 / GTA VI (Rockstar Games). Público: fãs de games no Brasil e no mundo.
+  Foco absoluto em VIRALIZAÇÃO, RETENÇÃO e ALTO IMPACTO (Shorts, TikTok, Reels e Compilados).
+  Procure momentos de:
+  - Reações explosivas, sustos, risadas ou choque genuíno do criador;
+  - Detalhes bizarros, easter eggs secretos e comparações insanas com GTA 5;
+  - Perseguições policiais épicas, bugs inacreditáveis ou tiroteios intensos;
+  - Debates acalorados sobre lançamento, gráficos, mapa de Vice City/Leonida e vazamentos permitidos.
+  DIRETRIZ DE TÍTULOS E GANCHOS:
+  - O TÍTULO DEVE SER MAGNÉTICO E VIRAL (Ex: 'A POLÍCIA DO GTA 6 FICOU INTELIGENTE DEMAIS?!', 'ESSE DETALHE NO GTA 6 NINGUÉM PERCEBEU!', 'OLHA O QUE ACONTECEU NESSA FUGA DO GTA 6!').
+  - O GANCHO (primeiros 3s) deve abrir no clímax ou na frase mais impactante para reter 100% da audiência.
+  Evite: introduções lentas, silêncios, agradecimentos e momentos sem emoção.
+
+keywords:
+  "gta 6": 2
+  "gta vi": 2
+  "gta6": 2
+  "gta 5": 1
+  "gta v ": 1
+  "vice city": 2
+  "leonida": 2
+  "lucia": 1.5
+  "jason": 1.5
+  "rockstar": 1.5
+  "trailer": 1.5
+  "easter egg": 2
+  "mapa": 1
+  "map ": 1
+  "polícia": 1
+  "police": 1
+  "online": 0.8
+  "ps5": 1
+  "xbox": 1
+  "lançamento": 1.5
+  "release": 1.2
+  "gráfico": 1
+  "graphics": 1
+  "física": 1
+  "physics": 1
+  "npc": 1.2
+  "absurdo": 1
+  "incrível": 1
+  "insane": 1
+  "crazy": 1
+  "não acredito": 1.2
+  "can't believe": 1.2
+
+# Palavras que marcam o corte com "risk" no clips.json/posts.csv.
+# Motivo: a política da Rockstar/Take-Two derruba vazamentos, spoilers de final,
+# cutscenes isoladas e cheats/glitches de GTA Online. É só um alerta p/ você revisar.
+risk_keywords:
+  - spoiler
+  - the ending
+  - final do jogo
+  - final da história
+  - vazou
+  - vazamento
+  - leak
+  - unboxing
+  - cópia antecipada
+  - early copy
+  - mod menu
+  - cheat
+  - money glitch
+  - glitch de dinheiro
+  - god mode
+  - dinheiro infinito
+
+hashtags:
+  - "#gta6"
+  - "#gtavi"
+  - "#rockstargames"
+  - "#vicecity"
+  - "#gtaonline"
+  - "#games"
+  - "#gamer"
+  - "#shorts"
+
+caption:
+  font: Montserrat
+  size: 80
+  highlight: "#FFD400"     # cor da palavra falada
+  hook_box: "#E4002B"      # cor da faixa do gancho (título nos primeiros segundos)
+  words_per_line: 3

@@ -1,0 +1,22 @@
+# Perfil genérico: copie este arquivo para criar um novo nicho.
+name: default
+language: null
+clips: 8
+min_seconds: 20
+max_seconds: 58
+reframe: blur
+
+niche_prompt: |
+  Escolha os momentos com maior potencial de retenção e compartilhamento:
+  revelações, opiniões fortes, histórias curtas completas, humor e emoção.
+  Evite introduções, agradecimentos e trechos arrastados.
+
+keywords: {}
+risk_keywords: []
+hashtags:
+  - "#shorts"
+  - "#fyp"
+
+caption:
+  font: Montserrat
+  highlight: "#FFD400"

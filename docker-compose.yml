@@ -1,0 +1,12 @@
+services:
+  megacortes:
+    build: .
+    env_file: .env
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"     # só este computador acessa. Para abrir na rede: defina MEGACORTES_PASSWORD no .env
+    volumes:
+      - ./data:/data                          # vídeos em ./data/videos; cortes em ./data/out
+      - whisper-cache:/root/.cache/huggingface  # modelos do Whisper (baixa uma vez só)
+volumes:
+  whisper-cache:
