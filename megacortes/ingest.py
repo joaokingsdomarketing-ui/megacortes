@@ -22,37 +22,39 @@ def is_url(s: str) -> bool:
 
 def _ytdlp_base() -> list[str]:
     cmd = [sys.executable, "-m", "yt_dlp"]
-    if shutil.which("node") and not shutil.which("deno"):
-        cmd += ["--js-runtimes", "node"]
-    
+
     cookies = os.getenv("MEGACORTES_COOKIES")
     if not cookies:
         cands = (
             Path("/data/cookies.txt"),
+            Path("/app/cookies.txt"),
             Path("data/cookies.txt"),
             Path("cookies.txt"),
-            Path("/app/cookies.txt"),
             Path(__file__).resolve().parent.parent / "cookies.txt",
+            Path(__file__).resolve().parent.parent / "data" / "cookies.txt",
         )
         for cand in cands:
-            if cand.is_file():
-                cookies = str(cand.resolve())
-                break
-                
+            try:
+                if cand.is_file() and cand.stat().st_size > 50:
+                    cookies = str(cand.resolve())
+                    break
+            except Exception:
+                continue
+
     if cookies and Path(cookies).is_file():
         try:
             tmp_cookies = Path("/tmp/yt_cookies.txt")
             shutil.copyfile(cookies, tmp_cookies)
             os.chmod(tmp_cookies, 0o666)
             cmd += ["--cookies", str(tmp_cookies)]
-            log(f"Usando cookies autenticados: {cookies} (cópia ativa gravável em {tmp_cookies})")
+            log(f"Usando cookies autenticados: {cookies}")
         except Exception as e:
             log(f"Aviso ao preparar cookies: {e}")
             cmd += ["--cookies", cookies]
     else:
-        # Contorna o bloqueio de bot em servidores (IPs de data center) emulando clientes mobile
+        # Sem cookies, tenta emular clientes mobile para contornar bloqueio de datacenter
         cmd += ["--extractor-args", "youtube:player_client=android,ios,web"]
-        
+
     return cmd
 
 
@@ -119,7 +121,7 @@ def video_title(workdir: Path, fallback: str = "") -> str:
 
 
 def expand_playlist(url: str, max_items: int = 20, depth: int = 3) -> list[str]:
-    """Se  for playlist/canal, devolve as URLs dos vídeos (até max_items); senão, [url]."""
+    """Se for playlist/canal, devolve as URLs dos vídeos (até max_items); senão, [url]."""
     cmd = _ytdlp_base() + ["--flat-playlist", "--dump-single-json", "--playlist-end", str(max_items), url]
     res = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
     if res.returncode != 0:
