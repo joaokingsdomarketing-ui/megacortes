@@ -80,9 +80,7 @@ def ingest(source: str, workdir: Path, cb: Callbacks = NO_CB) -> Path:
         if proc.poll() is None:
             proc.kill()
     if proc.returncode != 0:
-        raise RuntimeError("yt-dlp falhou:
-" + "
-".join(tail)[-800:])
+        raise RuntimeError("yt-dlp falhou:\n" + "\n".join(tail)[-800:])
     out = _find_download(workdir)
     if not out:
         raise RuntimeError("yt-dlp terminou mas não encontrei o arquivo baixado")
@@ -110,8 +108,7 @@ def expand_playlist(url: str, max_items: int = 20, depth: int = 3) -> list[str]:
     cmd = _ytdlp_base() + ["--flat-playlist", "--dump-single-json", "--playlist-end", str(max_items), url]
     res = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
     if res.returncode != 0:
-        raise RuntimeError("yt-dlp não conseguiu listar o link:
-" + res.stderr[-500:])
+        raise RuntimeError("yt-dlp não conseguiu listar o link:\n" + res.stderr[-500:])
     try:
         data = json.loads(res.stdout)
     except ValueError as e:
