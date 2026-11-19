@@ -1,5 +1,6 @@
 faster-whisper>=1.0.0
 yt-dlp[default]
+yt-dlp-ejs>=0.8.0
 numpy
 pyyaml
 requests
