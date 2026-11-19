@@ -27,12 +27,20 @@ def _ytdlp_base() -> list[str]:
     
     cookies = os.getenv("MEGACORTES_COOKIES")
     if not cookies:
-        for cand in (Path("/data/cookies.txt"), Path("data/cookies.txt"), Path("cookies.txt")):
+        cands = (
+            Path("/data/cookies.txt"),
+            Path("data/cookies.txt"),
+            Path("cookies.txt"),
+            Path("/app/cookies.txt"),
+            Path(__file__).resolve().parent.parent / "cookies.txt",
+        )
+        for cand in cands:
             if cand.is_file():
                 cookies = str(cand.resolve())
                 break
                 
     if cookies and Path(cookies).is_file():
+        log(f"Usando cookies autenticados: {cookies}")
         cmd += ["--cookies", cookies]
     else:
         # Contorna o bloqueio de bot em servidores (IPs de data center) emulando clientes mobile
