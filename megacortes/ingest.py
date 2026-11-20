@@ -23,7 +23,7 @@ def is_url(s: str) -> bool:
 def _ytdlp_base() -> list[str]:
     cmd = [
         sys.executable, "-m", "yt_dlp",
-        "--extractor-args", "youtube:player_client=android,ios,mweb",
+        "--extractor-args", "youtube:player_client=android",
         "--compat-options", "no-youtube-unavailable-videos",
         "--no-check-certificates",
     ]
