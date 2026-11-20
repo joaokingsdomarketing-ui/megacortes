@@ -21,26 +21,14 @@ def is_url(s: str) -> bool:
 
 
 def _ytdlp_base() -> list[str]:
-    cmd = [sys.executable, "-m", "yt_dlp"]
+    cmd = [
+        sys.executable, "-m", "yt_dlp",
+        "--extractor-args", "youtube:player_client=android,ios,mweb",
+        "--compat-options", "no-youtube-unavailable-videos",
+        "--no-check-certificates",
+    ]
 
     cookies = os.getenv("MEGACORTES_COOKIES")
-    if not cookies:
-        cands = (
-            Path("/data/cookies.txt"),
-            Path("/app/cookies.txt"),
-            Path("data/cookies.txt"),
-            Path("cookies.txt"),
-            Path(__file__).resolve().parent.parent / "cookies.txt",
-            Path(__file__).resolve().parent.parent / "data" / "cookies.txt",
-        )
-        for cand in cands:
-            try:
-                if cand.is_file() and cand.stat().st_size > 50:
-                    cookies = str(cand.resolve())
-                    break
-            except Exception:
-                continue
-
     if cookies and Path(cookies).is_file():
         try:
             tmp_cookies = Path("/tmp/yt_cookies.txt")
@@ -50,10 +38,6 @@ def _ytdlp_base() -> list[str]:
             log(f"Usando cookies autenticados: {cookies}")
         except Exception as e:
             log(f"Aviso ao preparar cookies: {e}")
-            cmd += ["--cookies", cookies]
-    else:
-        # Sem cookies, tenta emular clientes mobile para contornar bloqueio de datacenter
-        cmd += ["--extractor-args", "youtube:player_client=android,ios,web"]
 
     return cmd
 
@@ -74,7 +58,7 @@ def ingest(source: str, workdir: Path, cb: Callbacks = NO_CB) -> Path:
 
     log("Baixando com yt-dlp (use apenas conteúdo seu ou com autorização)...")
     cmd = _ytdlp_base() + [
-        "-f", "bv*[height<=1080]+ba/b[height<=1080]/b",
+        "-f", "bv*[height<=1080]+ba/b[height<=1080]/b/best",
         "--merge-output-format", "mp4",
         "--no-playlist", "--newline", "--write-info-json",
         "-o", str(workdir / "source.%(ext)s"),
@@ -97,7 +81,8 @@ def ingest(source: str, workdir: Path, cb: Callbacks = NO_CB) -> Path:
         if proc.poll() is None:
             proc.kill()
     if proc.returncode != 0:
-        raise RuntimeError("yt-dlp falhou:\n" + "\n".join(tail)[-800:])
+        err_msg = "\n".join(tail)[-800:]
+        raise RuntimeError(f"yt-dlp falhou:\n{err_msg}")
     out = _find_download(workdir)
     if not out:
         raise RuntimeError("yt-dlp terminou mas não encontrei o arquivo baixado")
@@ -125,7 +110,8 @@ def expand_playlist(url: str, max_items: int = 20, depth: int = 3) -> list[str]:
     cmd = _ytdlp_base() + ["--flat-playlist", "--dump-single-json", "--playlist-end", str(max_items), url]
     res = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
     if res.returncode != 0:
-        raise RuntimeError("yt-dlp não conseguiu listar o link:\n" + res.stderr[-500:])
+        err_msg = res.stderr[-500:]
+        raise RuntimeError(f"yt-dlp não conseguiu listar o link:\n{err_msg}")
     try:
         data = json.loads(res.stdout)
     except ValueError as e:
